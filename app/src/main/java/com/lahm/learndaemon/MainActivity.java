@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
+import com.lahm.learndaemon.scheduler.JobSchedulerManager;
 import com.lahm.learndaemon.screen.ScreenManager;
 import com.lahm.learndaemon.screen.ScreenReceiverUtil;
 import com.lahm.learndaemon.service.ForegroundDaemonService;
@@ -24,6 +25,7 @@ public class MainActivity extends AppCompatActivity {
     private void startDaemon() {
         initForegroundDaemonService();
         initScreenBroadcastReceiver();
+        initJobScheduler();
     }
 
     //-------------前台----------------
@@ -36,6 +38,7 @@ public class MainActivity extends AppCompatActivity {
 
     //--------------1像素--------------
     private ScreenReceiverUtil screenReceiverUtil;// 动态注册锁屏等广播
+
     private ScreenManager screenManager;// 1像素Activity管理类
 
     private void initScreenBroadcastReceiver() {
@@ -62,11 +65,20 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
+    //------------JobService
+    private JobSchedulerManager jobManager;
+
+    private void initJobScheduler() {
+        jobManager = JobSchedulerManager.getJobSchedulerInstance(this);
+        jobManager.startJobScheduler();
+    }
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
         if (foregroundDaemonServiceIntent != null) stopService(foregroundDaemonServiceIntent);
         if (screenReceiverUtil != null) screenReceiverUtil.stopScreenReceiverListener();
+        if (jobManager != null) jobManager.stopJobScheduler();
     }
 
     public static boolean isAPPALive(Context mContext, String packageName) {
