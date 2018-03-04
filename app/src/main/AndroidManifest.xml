@@ -18,16 +18,23 @@
         </activity>
         <!--注册前台服务,不需要被外部调用export为false（默认）-->
         <service
-            android:name=".ForegroundDaemonService"
+            android:name=".service.ForegroundDaemonService"
             android:enabled="true"
             android:exported="false"
             android:process=":daemon_service" />
         <!--注册前台服务的小弟，取消通知服务，进程在notice_service-->
         <service
-            android:name=".CancelNoticeService"
+            android:name=".service.CancelNoticeService"
             android:enabled="true"
             android:exported="false"
             android:process=":notice_service" />
+        <activity
+            android:name=".screen.SinglePixelActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize|navigation|keyboard"
+            android:excludeFromRecents="true"
+            android:finishOnTaskLaunch="false"
+            android:launchMode="singleInstance"
+            android:theme="@style/SingleActivityStyle" />
     </application>
 
 </manifest>

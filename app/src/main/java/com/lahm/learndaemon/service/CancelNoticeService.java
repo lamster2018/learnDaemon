@@ -1,4 +1,4 @@
-package com.lahm.learndaemon;
+package com.lahm.learndaemon.service;
 
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -9,12 +9,12 @@ import android.os.IBinder;
 import android.os.SystemClock;
 import android.support.annotation.Nullable;
 
+import com.lahm.learndaemon.R;
+
 /**
  * Project Name:learnDaemon
  * Package Name:com.lahm.learndaemon
  * Created by lahm on 2018/3/4 下午7:09 .
- * <p>
- * Copyright (c) 2016—2017 https://www.lizhiweike.com all rights reserved.
  */
 
 public class CancelNoticeService extends Service {

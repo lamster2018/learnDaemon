@@ -1,12 +1,18 @@
 package com.lahm.learndaemon;
 
+import android.app.ActivityManager;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
-public class MainActivity extends AppCompatActivity {
+import com.lahm.learndaemon.screen.ScreenManager;
+import com.lahm.learndaemon.screen.ScreenReceiverUtil;
+import com.lahm.learndaemon.service.ForegroundDaemonService;
 
-    private Intent foregroundDaemonServiceIntent;
+import java.util.List;
+
+public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -17,16 +23,65 @@ public class MainActivity extends AppCompatActivity {
 
     private void startDaemon() {
         initForegroundDaemonService();
+        initScreenBroadcastReceiver();
     }
+
+    //-------------前台----------------
+    private Intent foregroundDaemonServiceIntent;
 
     private void initForegroundDaemonService() {
         foregroundDaemonServiceIntent = new Intent(this, ForegroundDaemonService.class);
         startService(foregroundDaemonServiceIntent);
     }
 
+    //--------------1像素--------------
+    private ScreenReceiverUtil screenReceiverUtil;// 动态注册锁屏等广播
+    private ScreenManager screenManager;// 1像素Activity管理类
+
+    private void initScreenBroadcastReceiver() {
+        screenReceiverUtil = new ScreenReceiverUtil(this);
+        screenReceiverUtil.setScreenReceiverListener(mScreenListener);
+        screenManager = ScreenManager.getScreenManagerInstance(this);
+    }
+
+    private ScreenReceiverUtil.ScreenStateListener mScreenListener = new ScreenReceiverUtil.ScreenStateListener() {
+        @Override
+        public void onScreenOn() {
+            // 亮屏，移除"1像素"
+            screenManager.finishActivity();
+        }
+
+        @Override
+        public void onScreenOff() {
+            screenManager.startActivity();
+        }
+
+        @Override
+        public void onUserPresent() {
+            // 解锁，暂不用，保留
+        }
+    };
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
         if (foregroundDaemonServiceIntent != null) stopService(foregroundDaemonServiceIntent);
+        if (screenReceiverUtil != null) screenReceiverUtil.stopScreenReceiverListener();
+    }
+
+    public static boolean isAPPALive(Context mContext, String packageName) {
+        boolean isAPPRunning = false;
+        // 获取activity管理对象
+        ActivityManager activityManager = (ActivityManager) mContext.getSystemService(Context.ACTIVITY_SERVICE);
+        // 获取所有正在运行的app
+        List<ActivityManager.RunningAppProcessInfo> appProcessInfoList = activityManager.getRunningAppProcesses();
+        // 遍历，进程名即包名
+        for (ActivityManager.RunningAppProcessInfo appInfo : appProcessInfoList) {
+            if (packageName.equals(appInfo.processName)) {
+                isAPPRunning = true;
+                break;
+            }
+        }
+        return isAPPRunning;
     }
 }
