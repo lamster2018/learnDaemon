@@ -1,4 +1,4 @@
-package com.lahm.learndaemon.receiver;
+package com.lahm.learndaemon.nls;
 
 import android.annotation.TargetApi;
 import android.content.Context;

@@ -7,7 +7,8 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
 import com.lahm.learndaemon.bg.BgPlayService;
-import com.lahm.learndaemon.receiver.NLS;
+import com.lahm.learndaemon.nls.NLS;
+import com.lahm.learndaemon.nls.NLSProtectService;
 import com.lahm.learndaemon.scheduler.JobSchedulerManager;
 import com.lahm.learndaemon.screen.ScreenManager;
 import com.lahm.learndaemon.screen.ScreenReceiverUtil;
@@ -22,8 +23,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         startDaemon();
-        if (!NLS.isNotificationListenerEnabled(this))
-            startActivity(NLS.go2NLSSettingIntent());
     }
 
     private void startDaemon() {
@@ -31,6 +30,7 @@ public class MainActivity extends AppCompatActivity {
         initScreenBroadcastReceiver();
         initBgMusicService();
         initJobScheduler();
+        initNLS();
     }
 
     //-------------前台----------------
@@ -86,6 +86,19 @@ public class MainActivity extends AppCompatActivity {
         jobManager.startJobScheduler();
     }
 
+    //------------NLS
+    private Intent nlsIntent;
+    private Intent nlsProtectIntent;
+
+    private void initNLS() {
+        if (NLS.isNotificationListenerEnabled(this)) {
+            nlsIntent = new Intent(this, NLS.class);
+            startService(nlsIntent);
+            nlsProtectIntent = new Intent(this, NLSProtectService.class);
+            startService(nlsProtectIntent);
+        } else startActivity(NLS.go2NLSSettingIntent());//这里可以加一个startActivityForResult去做回调开启
+    }
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
@@ -93,6 +106,8 @@ public class MainActivity extends AppCompatActivity {
         if (screenReceiverUtil != null) screenReceiverUtil.stopScreenReceiverListener();
         if (bgService != null) stopService(bgService);
         if (jobManager != null) jobManager.stopJobScheduler();
+        if (nlsIntent != null) stopService(nlsIntent);
+        if (nlsProtectIntent != null) stopService(nlsProtectIntent);
     }
 
     public static boolean isAPPALive(Context mContext, String packageName) {
