@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
 import com.lahm.learndaemon.bg.BgPlayService;
+import com.lahm.learndaemon.receiver.NLS;
 import com.lahm.learndaemon.scheduler.JobSchedulerManager;
 import com.lahm.learndaemon.screen.ScreenManager;
 import com.lahm.learndaemon.screen.ScreenReceiverUtil;
@@ -21,6 +22,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         startDaemon();
+        if (!NLS.isNotificationListenerEnabled(this))
+            startActivity(NLS.go2NLSSettingIntent());
     }
 
     private void startDaemon() {
