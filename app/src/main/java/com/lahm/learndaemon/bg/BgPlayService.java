@@ -13,8 +13,6 @@ import com.lahm.learndaemon.R;
  * Project Name:learnDaemon
  * Package Name:com.lahm.learndaemon.bgmusic
  * Created by lahm on 2018/3/5 上午9:54 .
- * <p>
- * Copyright (c) 2016—2017 https://www.lizhiweike.com all rights reserved.
  */
 
 public class BgPlayService extends Service {
