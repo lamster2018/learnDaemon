@@ -38,6 +38,12 @@
             android:finishOnTaskLaunch="false"
             android:launchMode="singleInstance"
             android:theme="@style/SingleActivityStyle" />
+        <!--注册后台播放service-->
+        <service
+            android:name=".bg.BgPlayService"
+            android:enabled="true"
+            android:exported="false"
+            android:process=":play_process" />
         <!--注册AliveJobService-->
         <service
             android:name=".scheduler.AliveJobService"

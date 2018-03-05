@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
+import com.lahm.learndaemon.bg.BgPlayService;
 import com.lahm.learndaemon.scheduler.JobSchedulerManager;
 import com.lahm.learndaemon.screen.ScreenManager;
 import com.lahm.learndaemon.screen.ScreenReceiverUtil;
@@ -25,6 +26,7 @@ public class MainActivity extends AppCompatActivity {
     private void startDaemon() {
         initForegroundDaemonService();
         initScreenBroadcastReceiver();
+        initBgMusicService();
         initJobScheduler();
     }
 
@@ -65,6 +67,14 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
+    //------------后台音乐播放
+    private Intent bgService;
+
+    private void initBgMusicService() {
+        bgService = new Intent(this, BgPlayService.class);
+        startService(bgService);
+    }
+
     //------------JobService
     private JobSchedulerManager jobManager;
 
@@ -78,6 +88,7 @@ public class MainActivity extends AppCompatActivity {
         super.onDestroy();
         if (foregroundDaemonServiceIntent != null) stopService(foregroundDaemonServiceIntent);
         if (screenReceiverUtil != null) screenReceiverUtil.stopScreenReceiverListener();
+        if (bgService != null) stopService(bgService);
         if (jobManager != null) jobManager.stopJobScheduler();
     }
 

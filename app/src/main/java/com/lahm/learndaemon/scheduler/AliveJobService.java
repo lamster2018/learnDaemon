@@ -19,7 +19,6 @@ import com.lahm.learndaemon.MainActivity;
 
 @TargetApi(Build.VERSION_CODES.LOLLIPOP)
 public class AliveJobService extends JobService {
-    private final static String TAG = "KeepAliveService";
     private volatile static Service mKeepAliveService = null;
 
     public static boolean isJobServiceAlive() {
